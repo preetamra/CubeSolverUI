@@ -15,6 +15,7 @@ import {
   useFrameProcessor,
   runAsync
 } from 'react-native-vision-camera';
+import { CubeSolver } from './FrameProcessorWrapper';
 
 function App() {
   const { hasPermission, requestPermission } = useCameraPermission();
@@ -25,7 +26,7 @@ function App() {
 
     runAsync(frame, () => {
       'worklet'
-      console.log("I'm running asynchronously, possibly at a lower FPS rate!")
+      console.log("I'm running asynchronously, possibly at a lower FPS rate!",CubeSolver(frame))
     })
   }, [])
 
