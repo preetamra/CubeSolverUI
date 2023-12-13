@@ -1,4 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { 
+  useEffect,
+  useState,
+  useRef
+ } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -7,6 +11,7 @@ import {
   Text,
   useColorScheme,
   View,
+  Button
 } from 'react-native';
 import { 
   useCameraPermission,
@@ -16,6 +21,48 @@ import {
   runAsync
 } from 'react-native-vision-camera';
 import { CubeSolver } from './FrameProcessorWrapper';
+import { 
+  Canvas, 
+  useFrame,
+  useThree,
+  extend
+} from '@react-three/fiber';
+import {  
+  BoxGeometry, 
+  Mesh, 
+  MeshBasicMaterial,
+  Group
+} from "three";
+import {
+OrbitControls
+} from  "three/examples/jsm/controls/OrbitControls"
+
+import RubiksCube from './src/RubiksCube/RubiksCube';
+
+extend({ OrbitControls })
+
+const CameraControls = ({rotate}) => {
+  const {camera, gl:{domElement}} = useThree()
+  const controls = useRef()
+  
+  useFrame(() => {
+    controls.current.update()
+  })
+
+  return (
+    <orbitControls
+      ref={controls}
+      args={[camera, domElement]}
+      enableZoom={true}
+      enableRotate={rotate}
+      enableDamping={true}
+      dampingFactor={0.05}
+      maxDistance={12}
+      minDistance={6}
+      enablePan={false}
+    />
+  );
+}
 
 function App() {
   const { hasPermission, requestPermission } = useCameraPermission();
@@ -41,29 +88,45 @@ function App() {
     })
    }
   },[]);
+
+  const cube = useRef();
+
+  const [clickOnCube, setClickOnCube] = useState(false);
+
+  const shuffleRef = useRef()
+  const undoRef = useRef()
+  const redoRef = useRef()
+  const solveRef = useRef()
   
   return (
-    !hasPermission?
-    <View style={{
-      flex:1,
-      justifyContent:"center",
-      alignContent:"center"
-    }}>
-      <Text>
-        Permission Denied
-      </Text>
-    </View>:
-    <View style={{
-      flex:1,
-    }}>
-    <Camera 
-    device={device}
-    style={StyleSheet.absoluteFill}
-    isActive={true}
-    orientation='portrait'
-    frameProcessor={frameProcessor}
-    />
-    </View>
+    <>
+       <Canvas
+      style={{
+        flex:1
+      }}
+      camera={{
+        fov:75,
+        position:[1,1,6]
+      }}
+      >
+       <CameraControls rotate={!clickOnCube} />
+       <RubiksCube
+       onShuffle={(callback) => (shuffleRef.current = callback)}
+       onUndo={(callback) => (undoRef.current = callback)}
+       onRedo={(callback) => (redoRef.current = callback)}
+       onSolve={(callback) => (solveRef.current = callback)}
+       blockRubikCubeRotation={(value) => {
+        setClickOnCube(value)
+      }}
+       ></RubiksCube>
+      </Canvas>
+      <Button
+      title='Click Me'
+      onPress={() => {
+        shuffleRef && shuffleRef.current()
+      }}
+      />
+    </>
   );
 }
 

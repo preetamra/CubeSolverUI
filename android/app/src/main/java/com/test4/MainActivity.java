@@ -1,6 +1,7 @@
 package com.test4;
 
 import android.util.Log;
+import expo.modules.ReactActivityDelegateWrapper;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
@@ -31,10 +32,13 @@ public class MainActivity extends ReactActivity {
     {
       Log.v("OpenCV loader","opencv loaded");
     }
-    return new DefaultReactActivityDelegate(
-        this,
-        getMainComponentName(),
-        // If you opted-in for the New Architecture, we enable the Fabric Renderer.
-        DefaultNewArchitectureEntryPoint.getFabricEnabled());
+    return new ReactActivityDelegateWrapper(this, BuildConfig.IS_NEW_ARCHITECTURE_ENABLED, 
+    new DefaultReactActivityDelegate(this,getMainComponentName(),
+      	        // If you opted-in for the New Architecture, we enable the Fabric Renderer.
+      	        DefaultNewArchitectureEntryPoint.getFabricEnabled(), // fabricEnabled
+      	        // If you opted-in for the New Architecture, we enable Concurrent React (i.e. React 18).
+      	        DefaultNewArchitectureEntryPoint.getConcurrentReactEnabled() // concurrentRootEnabled
+      		      )
+      	      );
   }
 }
