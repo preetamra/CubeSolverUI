@@ -35,11 +35,20 @@ import {
 } from "three";
 import {
 OrbitControls
-} from  "three/examples/jsm/controls/OrbitControls"
+} from  "three/examples/jsm/controls/OrbitControls";
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import RubiksCube from './src/RubiksCube/RubiksCube';
+import WellComeScreen from "./src/Screens/WellCome";
+import ScannerScreen from './src/Screens/ScannerScreen';
+import SolutionScreen from './src/Screens/Solution';
 
-extend({ OrbitControls })
+extend({ OrbitControls });
+
+const Stack = createNativeStackNavigator();
+
+
 
 const CameraControls = ({rotate}) => {
   const {camera, gl:{domElement}} = useThree()
@@ -100,35 +109,62 @@ function App() {
   
   return (
     <>
-       <Canvas
-      style={{
-        flex:1
-      }}
-      camera={{
-        fov:75,
-        position:[1,1,6]
-      }}
-      >
-       <CameraControls rotate={!clickOnCube} />
-       <RubiksCube
-       onShuffle={(callback) => (shuffleRef.current = callback)}
-       onUndo={(callback) => (undoRef.current = callback)}
-       onRedo={(callback) => (redoRef.current = callback)}
-       onSolve={(callback) => (solveRef.current = callback)}
-       blockRubikCubeRotation={(value) => {
-        setClickOnCube(value)
-      }}
-       ></RubiksCube>
-      </Canvas>
-      <Button
-      title='Click Me'
-      onPress={() => {
-        shuffleRef && shuffleRef.current()
-      }}
-      />
+      <NavigationContainer>
+        <Stack.Navigator 
+        initialRouteName='Home'>
+          <Stack.Screen 
+          name='Home'
+          component={WellComeScreen}
+          options={{
+            headerShown:false
+          }}
+          />
+          <Stack.Screen 
+          name='Scanner'
+          component={ScannerScreen}
+          options={{
+            headerShown:false
+          }}
+          />
+          <Stack.Screen
+          name='Solution'
+          component={SolutionScreen}
+          options={{
+            headerShown:false
+          }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     </>
   );
 }
+
+{/* <Canvas
+style={{
+  flex:1
+}}
+camera={{
+  fov:75,
+  position:[1,1,6]
+}}
+>
+ <CameraControls rotate={!clickOnCube} />
+ <RubiksCube
+ onShuffle={(callback) => (shuffleRef.current = callback)}
+ onUndo={(callback) => (undoRef.current = callback)}
+ onRedo={(callback) => (redoRef.current = callback)}
+ onSolve={(callback) => (solveRef.current = callback)}
+ blockRubikCubeRotation={(value) => {
+  setClickOnCube(value)
+}}
+ ></RubiksCube>
+</Canvas>
+<Button
+title='Click Me'
+onPress={() => {
+  shuffleRef && shuffleRef.current()
+}}
+/> */}
 
 const styles = StyleSheet.create({
   sectionContainer: {

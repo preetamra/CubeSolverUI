@@ -70,13 +70,13 @@ export default RubiksCube = (props) =>  {
 
     const [state, { set, reset, undo, redo, canUndo, canRedo }] = useHistory([]);
 
-    const [activeDrag, bindDrag] = useDrag(onStart, onDrag, null, props.blockRubikCubeRotation)
+    const [activeDrag, bindDrag] = useDrag(onStart, onDrag, null, props.blockRubikCubeRotation);
 
     //Funcion that performs the visual movement
     function visualMove(rotation){
-    pivot.current.rotation[rotateAxis] = direction * rotation
-    pivot.current.updateMatrixWorld()
-    setControlRotation(controlRotation => controlRotation + (direction * rotation))
+    pivot.current.rotation[rotateAxis] = direction * rotation;
+    pivot.current.updateMatrixWorld();
+    setControlRotation(controlRotation => controlRotation + (direction * rotation));
     allCubes.forEach((cube,i) => {
       if(Math.round(rubikCube.current.children[i].getWorldPosition(new Vector3())[rotateAxis]) === Math.round(initialCubeClicked[rotateAxis])){
         rubikCube.current.children[i].applyMatrix4(pivot.current.matrixWorld)
@@ -93,7 +93,7 @@ export default RubiksCube = (props) =>  {
           const x = (i - 1) * 1,
           y = (j - 1) * 1,
           z = (k - 1) * 1;
-          console.log(x,y,z);
+          //console.log(x,y,z);
           assistCube.push(
             <Cube
               key={
@@ -126,9 +126,9 @@ export default RubiksCube = (props) =>  {
             set(movement);
         }
  */        setMovementQueue(movements)
-        console.log(movements);
-        console.log(allCubes);
-        console.log(props.position);
+        //console.log(movements);
+        //console.log(allCubes);
+        //console.log(props.position);
     })
     //Undo movement
     props.onUndo(()=>{
@@ -160,7 +160,7 @@ export default RubiksCube = (props) =>  {
   })
 
     useEffect(()=> {
-        console.log(movementQueue.length);
+        //console.log(movementQueue.length);
         if(movementQueue.length !== 0){
           let movement = movementQueue[0]
           dispatch({

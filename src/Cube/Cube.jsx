@@ -112,17 +112,18 @@ const Cube = forwardRef(({position},ref) => {
      let tempmat =[];
      for(let i = 0;i<6;i++)
      {
-      console.log(position);
-      console.log(i);
+      console.log("position :- ",position);
+      console.log("i",i);
       let cnd = colorConditions[i];
+      console.log("cnd",cnd);
       if(position[cnd[0]] == cnd[1])
       {
         console.log("push color to face ",position[cnd[0]],cnd[2]);
-        console.log("color Condition :- ",colorConditions[i])
+        //console.log("color Condition :- ",colorConditions[i])
         tempmat.push(mater[cnd[2]]);
       }else{
         console.log("push color to face ",position[cnd[0]],"gray");
-        console.log("color Condition :- ",colorConditions[i])
+        //console.log("color Condition :- ",colorConditions[i])
         tempmat.push(mater["gray"]);
       }
       let tempCube = new Mesh(geo,tempmat);

@@ -23,7 +23,7 @@ function findDirection(cubeFaceClicked, rubikCubeSide, axisDisplaced, vectorDrag
     (cubeFaceClicked == "z" && rubikCubeSide === -1)
   )
     foundDirection *= -1;
-    console.log(foundDirection)
+    //console.log(foundDirection)
   return foundDirection
 }
 
