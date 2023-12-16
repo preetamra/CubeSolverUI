@@ -7,7 +7,7 @@ import { View,Text,Button } from "react-native"
 import { Canvas,extend,useThree,useFrame } from "@react-three/fiber";
 import {
   OrbitControls
-  } from  "three/examples/jsm/controls/OrbitControls"
+  } from  "three/examples/jsm/controls/OrbitControls";
   
 import RubiksCube from "../RubiksCube/RubiksCube";  
   

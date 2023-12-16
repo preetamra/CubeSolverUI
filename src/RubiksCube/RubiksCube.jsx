@@ -26,6 +26,14 @@ export default RubiksCube = (props) =>  {
     const pivot = useRef();
 
     useFrame(()=> { 
+      if(rubikCube.current.rotation.y != 1.5708 && rubikCube.current.rotation.y < 1.5708)
+      {
+         rubikCube.current.rotation.y = rubikCube.current.rotation.y + 0.10;
+         rubikCube.current.updateMatrixWorld();
+      }else {
+
+      }
+      console.log(rubikCube.current.rotation.x);
         if(rotateAxis && !activeDrag){
           if(Math.abs(controlRotation) < Math.PI / 2){
             visualMove(0.125) 
@@ -174,7 +182,11 @@ export default RubiksCube = (props) =>  {
 
     return(
     <>
-      <group rotation={[0, 0, 0]} name={"group"} ref={rubikCube} {...bindDrag} >
+      <group 
+      rotation={[1.5708 * 0 , 1.5708 * 0, 0]} 
+      name={"group"} 
+      ref={rubikCube} 
+      {...bindDrag} >
         {allCubes}
       </group>
       <group ref={pivot} position={[0, 0, 0]} name={"pivot"} />

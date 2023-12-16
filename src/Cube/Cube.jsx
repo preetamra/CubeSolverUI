@@ -1,11 +1,19 @@
 import React, {forwardRef, useEffect, useRef, useState} from 'react'
-import { useLoader } from '@react-three/fiber'
+import { 
+  useLoader,
+  extend
+ } from '@react-three/fiber'
 import { 
   BoxGeometry, 
   Color, 
   Mesh,
-  MeshBasicMaterial
+  MeshBasicMaterial,
+  ShaderMaterial,
+  Vector2,
  } from 'three'
+import { Pressable } from 'react-native'; 
+
+extend({Pressable})
 
 const colorConditions = [
   [
@@ -40,28 +48,95 @@ const colorConditions = [
   ]
 ];
 
+const vertexShader = `
+varying vec2 vUv;
+
+void main() {
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+`;
+
+const fragmentShaderFn = (color) => {
+  return `varying vec2 vUv;
+  uniform vec3 faceColor;
+  
+  void main() {
+    vec3 border = vec3(0.533);
+    float bl = smoothstep(0.0, 0.03, vUv.x);
+    float br = smoothstep(1.0, 0.97, vUv.x);
+    float bt = smoothstep(0.0, 0.03, vUv.y);
+    float bb = smoothstep(1.0, 0.97, vUv.y);
+    vec3 blueColor = ${color}; // Set the color to blue
+    vec3 c = mix(border, blueColor, bt*br*bb*bl);
+    gl_FragColor = vec4(c, 1.0);
+  }
+`
+}
+
 const mater = {
-  "blue":new MeshBasicMaterial({ 
-    color: 0x00FF
+  "blue":new ShaderMaterial({ 
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShaderFn("vec3(0.0, 0.0, 1.0)"),
+    uniforms:{
+      time: { value: 1.0 },
+      resolution: { value: new Vector2() }
+    }
    }),
-  "green":new MeshBasicMaterial({ 
-    color: 0x00FF00 
+  "green":new ShaderMaterial({ 
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShaderFn("vec3(0.0, 1.0, 0.0)"),
+    uniforms:{
+      time: { value: 1.0 },
+      resolution: { value: new Vector2() }
+    } 
   }),
-  "yellow":new MeshBasicMaterial({ 
-    color: 0xFFFF00 
+  "yellow":new ShaderMaterial({ 
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShaderFn("vec3(1.0, 1.0, 0.0)"),
+    uniforms:{
+      time: { value: 1.0 },
+      resolution: { value: new Vector2() }
+    } 
   }),
-  "red":new MeshBasicMaterial({
-    color:0xFF0000
+  "red":new ShaderMaterial({
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShaderFn("vec3(1.0, 0.0, 0.0)"),
+    uniforms:{
+      time: { value: 1.0 },
+      resolution: { value: new Vector2() }
+    } 
   }),
-  "white":new MeshBasicMaterial({
-    color:0xFFFfff
+  "white":new ShaderMaterial({
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShaderFn("vec3(1.0, 1.0, 1.0)"),
+    uniforms:{
+      time: { value: 1.0 },
+      resolution: { value: new Vector2() }
+    } 
   }),
-  "orange":new MeshBasicMaterial({
-    color:0xFFA500
+  "orange":new ShaderMaterial({
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShaderFn("vec3(1.0, 0.6, 0.0)"),
+    uniforms:{
+      time: { value: 1.0 },
+      resolution: { value: new Vector2() }
+    }
   }),
-  "gray":new MeshBasicMaterial({
-    color:0x808080
+  "gray":new ShaderMaterial({
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShaderFn("vec3(0.2, 0.5, 0.0)"),
+    uniforms:{
+      time: { value: 1.0 },
+      resolution: { value: new Vector2() }
+    }
   })
+}
+
+const pressable = ({onPress}) => {
+  return(
+    <pressable onPress={onPress}></pressable>
+  )
 }
 
 const Cube = forwardRef(({position},ref) => {
@@ -132,12 +207,18 @@ const Cube = forwardRef(({position},ref) => {
      }
 
     return (
-        <group ref={ref} position={Object.values(position)} >
+        <group 
+        onClick={() => {
+          console.log("Pressed on Cube",position);
+        }}
+        ref={ref} 
+        position={Object.values(position)} >
           {cube.map(ele => {
       return(
         <primitive
         object={ele}
-        ></primitive>
+        >
+        </primitive>
       )
      })}
         </group>
